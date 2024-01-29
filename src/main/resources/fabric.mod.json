@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "donotfall",
+  "version": "${version}",
+  "name": "DoNotFall",
+  "description": "",
+  "authors": [
+    "didakamaybe"
+  ],
+  "contact": {
+    "repo": "https://github.com/deyanvnikolov/DoNotFall"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/donotfall/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "net.didakamaybe.donotfall.client.DoNotFallClient"
+    ],
+    "modmenu": [
+      "net.didakamaybe.donotfall.client.ConfigScreen"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  },
+  "custom": {
+    "modmenu": {
+      "update_checker": false
+    }
+  }
+}
