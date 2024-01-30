@@ -26,21 +26,10 @@ public class ModConfig {
         return instance;
     }
 
-    public boolean isShowBlockName() {
-        return showBlockName;
-    }
-
-    public boolean isWorkInCreative() {
-        return isWorkInCreative;
-    }
-    public void setShowBlockName(boolean showBlockName) {
-        this.showBlockName = showBlockName;
-        saveConfig();
-    }
-    public void setWorkInCreative(boolean workInCreative) {
-        this.isWorkInCreative = workInCreative;
-        saveConfig();
-    }
+    public boolean isShowBlockName() { return showBlockName; }
+    public boolean isWorkInCreative() { return isWorkInCreative; }
+    public void setShowBlockName(boolean showBlockName) { this.showBlockName = showBlockName; saveConfig();}
+    public void setWorkInCreative(boolean workInCreative) {this.isWorkInCreative = workInCreative; saveConfig(); }
 
     private static ModConfig loadConfig() {
         try {
