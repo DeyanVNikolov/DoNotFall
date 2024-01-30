@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "donotfall",
+  "version": "${version}",
+  "name": "DoNotFall",
+  "description": "This mod prevents you from falling from high places. It doesn't prevent you per se, but warns if for impending doom.",
+  "authors": [
+    "didakamaybe"
+  ],
+  "contact": {
+    "repo": "https://github.com/deyanvnikolov/DoNotFall",
+    "sources": "https://github.com/deyanvnikolov/DoNotFall",
+    "issues": "https://github.com/deyanvnikolov/DoNotFall/issues",
+    "homepage": "https://modrinth.com/mod/donotfall"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/donotfall/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "net.didakamaybe.donotfall.client.DoNotFallClient"
+    ],
+    "modmenu": [
+      "net.didakamaybe.donotfall.client.ConfigScreen"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  },
+  "custom": {
+    "modmenu": {
+      "update_checker": false
+    }
+  }
+}
