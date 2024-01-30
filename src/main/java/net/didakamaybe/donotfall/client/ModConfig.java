@@ -13,10 +13,12 @@ public class ModConfig {
     private static ModConfig instance;
     private boolean showBlockName;
     private boolean isWorkInCreative;
+    private boolean shouldDoVersionCheck;
 
     private ModConfig() {
         showBlockName = false;
         isWorkInCreative = false;
+        shouldDoVersionCheck = true;
     }
 
     public static ModConfig getInstance() {
@@ -27,9 +29,14 @@ public class ModConfig {
     }
 
     public boolean isShowBlockName() { return showBlockName; }
-    public boolean isWorkInCreative() { return isWorkInCreative; }
     public void setShowBlockName(boolean showBlockName) { this.showBlockName = showBlockName; saveConfig();}
+
+    public boolean isWorkInCreative() { return isWorkInCreative; }
     public void setWorkInCreative(boolean workInCreative) {this.isWorkInCreative = workInCreative; saveConfig(); }
+
+    public boolean shouldDoVersionCheck() { return shouldDoVersionCheck; }
+    public void setShouldDoVersionCheck(boolean NewValue) { this.shouldDoVersionCheck = NewValue; saveConfig(); }
+
 
     private static ModConfig loadConfig() {
         try {

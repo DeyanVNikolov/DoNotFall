@@ -2,8 +2,10 @@ package net.didakamaybe.donotfall.client;
 
 import net.didakamaybe.donotfall.client.configs.WorkInCreative;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -15,65 +17,86 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.logging.Logger;
+
 public class DoNotFallClient implements ClientModInitializer {
     private static KeyBinding toggleKey;
     private static boolean isFeatureEnabled = false;
 
     @Override
     public void onInitializeClient() {
-        // Initialize and register the keybinding
+        System.out.println("DoNotFall is initializing!");
         toggleKey = new KeyBinding(
-                "key.donotfall.toggle",
+                "Toggle DoNotFall",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_R,
-                "category.donotfall.general"
+                "DoNotFall"
         );
         KeyBindingHelper.registerKeyBinding(toggleKey);
+        System.out.println("DoNotFall has initialized!");
 
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player == null) return;
-
-            if (toggleKey.wasPressed()) {
-                isFeatureEnabled = !isFeatureEnabled;
-                if (isFeatureEnabled) {
-                    client.player.sendMessage(Text.of("§aDoNotFall engaged!"), true);
-                } else {
-                    client.player.sendMessage(Text.of("§6DoNotFall disengaged!"), true);
-                }
-            }
-
-            if (isFeatureEnabled) {
-                if (client.player.isCreative() && !WorkInCreative.getWorkInCreative()) {
-                    WorkInCreative.sendWarning(client);
-                    return;
-                }
-                if (!client.player.isOnGround()) {
-                    BlockPos pos = client.player.getBlockPos();
-                    while (pos.getY() > -64) {
-                        pos = pos.down();
-                        BlockState state = client.world.getBlockState(pos);
-                        if (!state.isAir()) {
-                            int y = pos.getY();
-                            int currentY = client.player.getBlockPos().getY();
-                            double diff = currentY - y;
-                            if (diff > 2) {
-                                client.player.sendMessage(Text.of("§6DoNotFall disengaged while you are in the air!"), true);
-                                return;
-                            }
-                            break;
-                        }
-                    }
-
-
-                }
-
-                checkBlockBelow(client);
-            }
+        System.out.println("DoNotFall is registering events!");
+        ClientTickEvents.END_CLIENT_TICK.register(this::handleClientTick);
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            handleVersionCheck(MinecraftClient.getInstance());
         });
+        System.out.println("DoNotFall has registered events!");
+
+
     }
 
-    private String LastBlock(MinecraftClient client) {
+
+    private void handleVersionCheck(MinecraftClient client) {
+        if (ModConfig.getInstance().shouldDoVersionCheck()) {
+            System.out.println("DoNotFall is checking for updates!");
+            try {
+                String ver = VersionChecker.checkVersion();
+                if (!ver.equals("error") && !ver.equals(VersionChecker.VERSION)) {
+                    client.player.sendMessage(Text.of("§9[DoNotFall] §6There is a new version of DoNotFall available! You are using §c" + VersionChecker.VERSION + "§6 and the latest version is §c" + ver), false);
+                    client.player.sendMessage(Text.of("§9[DoNotFall] §6You can download it from §c" + VersionChecker.UPDATE_URL), false);
+                } else if (ver.equals("error")) {
+                    client.player.sendMessage(Text.of("§9[DoNotFall] §cThere was an error while checking for updates!"), false);
+                } else {
+                    client.player.sendMessage(Text.of("§9[DoNotFall] §aYou are using the latest version of DoNotFall!"), false);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("DoNotFall is not checking for updates!");
+        }
+    }
+
+    private void handleClientTick(MinecraftClient client) {
+        if (client.player == null) return;
+
+        if (toggleKey.wasPressed()) {
+            isFeatureEnabled = !isFeatureEnabled;
+            if (isFeatureEnabled) {
+                client.player.sendMessage(Text.of("§9DoNotFall §aengaged!"), true);
+            } else {
+                client.player.sendMessage(Text.of("§9DoNotFall §cdisengaged!"), true);
+            }
+        }
+
+        if (isFeatureEnabled) {
+            if (client.player.isCreative() && !WorkInCreative.getWorkInCreative()) {
+                WorkInCreative.sendWarning(client);
+                return;
+            }
+            if (!client.player.isOnGround()) {
+                client.player.sendMessage(Text.of("§9DoNotFall §6is §cdisenaged §6while you are in the air!"), true);
+                return;
+            }
+
+            checkBlockBelow(client);
+
+        }
+    }
+
+    private String lastBlock(MinecraftClient client) {
         assert client.player != null;
         BlockPos pos = client.player.getBlockPos().down().down();
         boolean is_air = client.world.getBlockState(pos).isAir();
@@ -91,6 +114,7 @@ public class DoNotFallClient implements ClientModInitializer {
         }
     }
 
+    // #TODO this method is not used (yet)
     private void playSoundToPlayer(MinecraftClient client) {
         if (client.player != null && client.world != null) {
             client.player.playSound(SoundEvents.BLOCK_ANVIL_HIT, SoundCategory.PLAYERS, 0.3F, 1.0F);
@@ -99,7 +123,7 @@ public class DoNotFallClient implements ClientModInitializer {
 
     private void checkBlockBelow(MinecraftClient client) {
         assert client.player != null;
-        String lastBlock = LastBlock(client);
+        String lastBlock = lastBlock(client);
         float diff = 0;
         float currentY = 0;
         float y = 0;

@@ -13,7 +13,7 @@
     "issues": "https://github.com/deyanvnikolov/DoNotFall/issues",
     "homepage": "https://modrinth.com/mod/donotfall"
   },
-  "license": "All-Rights-Reserved",
+  "license": "MIT License",
   "icon": "assets/donotfall/icon.png",
   "environment": "client",
   "entrypoints": {
@@ -27,7 +27,8 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": "${minecraft_version}"
+    "minecraft": "${minecraft_version}",
+    "modmenu": "7.2.2"
   },
   "custom": {
     "modmenu": {

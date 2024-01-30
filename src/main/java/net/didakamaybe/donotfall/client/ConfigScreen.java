@@ -5,6 +5,7 @@ import com.terraformersmc.modmenu.api.ModMenuApi;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import net.didakamaybe.donotfall.client.configs.ShouldDoVersionCheck;
 import net.didakamaybe.donotfall.client.configs.ShowBlockName;
 import net.didakamaybe.donotfall.client.configs.WorkInCreative;
 import net.minecraft.text.Text;
@@ -29,8 +30,12 @@ public class ConfigScreen implements ModMenuApi {
                     .setTooltip(Text.literal("Work in creative mode"))
                     .setSaveConsumer(WorkInCreative::saveWorkInCreative)
                     .build());
+            general.addEntry(entryBuilder.startBooleanToggle(Text.literal("Check for updates"), ShouldDoVersionCheck.getShouldDoVersionCheck())
+                    .setDefaultValue(true)
+                    .setTooltip(Text.literal("Check for updates"))
+                    .setSaveConsumer(ShouldDoVersionCheck::saveShouldDoVersionCheck)
+                    .build());
 
-            // Build and return the screen
             return builder.build();
         };
     }

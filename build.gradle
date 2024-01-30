@@ -27,6 +27,7 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
     modApi "me.shedaniel.cloth:cloth-config-fabric:11.1.118"
+    implementation 'org.json:json:20210307'
 
 }
 
